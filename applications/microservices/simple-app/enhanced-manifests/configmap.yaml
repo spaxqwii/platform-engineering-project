@@ -46,7 +46,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-html
+  name: nginx-config
   namespace: simple-app
 data:
   index.html: |
