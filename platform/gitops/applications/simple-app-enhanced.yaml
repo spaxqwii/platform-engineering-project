@@ -11,8 +11,6 @@ metadata:
     environment: production
     team: platform-engineering
     type: microservice
-finalizers:
-  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
@@ -45,12 +43,6 @@ spec:
     jsonPointers:
     - /spec/replicas
     - /metadata/annotations/deployment.kubernetes.io~1revision
-    - /spec/template/spec/containers/0/image
-    name: simple-app
-  - group: autoscaling
-    kind: HorizontalPodAutoscaler
-    jsonPointers:
-    - /spec/metrics
   info:
   - name: Description
     value: Enhanced simple application with production best practices
