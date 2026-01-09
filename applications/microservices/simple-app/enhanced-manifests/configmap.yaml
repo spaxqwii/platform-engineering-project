@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: simple-app
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+    
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        
+        sendfile on;
+        keepalive_timeout 65;
+        
+        server {
+            listen 80;
+            server_name _;
+            
+            location / {
+                root /usr/share/nginx/html;
+                index index.html index.htm;
+                try_files $uri $uri/ =404;
+            }
+            
+            location /health {
+                access_log off;
+                return 200 "healthy\n";
+                add_header Content-Type text/plain;
+            }
+            
+            location /metrics {
+                stub_status on;
+                access_log off;
+            }
+            
+            location /version {
+                alias /usr/share/nginx/html/version.txt;
+            }
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-html
+  namespace: simple-app
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Platform Engineering Demo</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; }
+            .container { max-width: 800px; margin: 0 auto; }
+            .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+            .healthy { background-color: #d4edda; color: #155724; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🚀 Platform Engineering Demo</h1>
+            <div class="status healthy">
+                ✅ Application is running successfully!
+            </div>
+            <h2>Application Details:</h2>
+            <ul>
+                <li><strong>Name:</strong> Simple App</li>
+                <li><strong>Version:</strong> v1.0.0</li>
+                <li><strong>Environment:</strong> Production</li>
+                <li><strong>Managed by:</strong> Argo CD GitOps</li>
+            </ul>
+            <h2>Endpoints:</h2>
+            <ul>
+                <li><a href="/health">/health</a> - Health check</li>
+                <li><a href="/metrics">/metrics</a> - Prometheus metrics</li>
+                <li><a href="/version">/version</a> - Version info</li>
+            </ul>
+            <h2>Platform Features:</h2>
+            <ul>
+                <li>✅ GitOps with Argo CD</li>
+                <li>✅ Kubernetes Deployment</li>
+                <li>✅ Service & Ingress</li>
+                <li>✅ Resource Limits</li>
+                <li>✅ Health Checks</li>
+                <li>✅ ConfigMaps for configuration</li>
+            </ul>
+        </div>
+    </body>
+    </html>
+  version.txt: v1.0.0

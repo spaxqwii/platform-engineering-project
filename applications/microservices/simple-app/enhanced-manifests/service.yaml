@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-app
+  namespace: simple-app
+  labels:
+    app: simple-app
+    service: web
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+    prometheus.io/scheme: "http"
+spec:
+  selector:
+    app: simple-app
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  type: ClusterIP

@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: simple-app-enhanced
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-options: "PruneLast=true"
+  labels:
+    app: simple-app
+    environment: production
+    team: platform-engineering
+    type: microservice
+finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/spaxqwii/platform-engineering-project.git
+    path: applications/microservices/simple-app/enhanced-manifests
+    targetRevision: main
+    kustomize:
+      namePrefix: prod-
+      commonLabels:
+        deployed-via: argocd
+      commonAnnotations:
+        deployment-timestamp: "2024-01-06"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: simple-app
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true
+    - Validate=true
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+    - /metadata/annotations/deployment.kubernetes.io~1revision
+    - /spec/template/spec/containers/0/image
+    name: simple-app
+  - group: autoscaling
+    kind: HorizontalPodAutoscaler
+    jsonPointers:
+    - /spec/metrics
+  info:
+  - name: Description
+    value: Enhanced simple application with production best practices
+  - name: Health Checks
+    value: "Liveness: /, Readiness: /, Metrics: /metrics"
+  - name: Contact
+    value: platform-engineering-team@example.com
+  - name: Source Code
+    value: https://github.com/spaxqwii/platform-engineering-project
