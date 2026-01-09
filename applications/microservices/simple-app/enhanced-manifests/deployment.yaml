@@ -31,9 +31,9 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 101
+        runAsGroup: 101
+        fsGroup: 101
       containers:
       - name: nginx
         image: nginx:1.25-alpine
@@ -86,6 +86,12 @@ spec:
           readOnly: true
         - name: html-volume
           mountPath: /usr/share/nginx/html
+        - name: nginx-cache
+          mountPath: /var/cache/nginx
+        - name: nginx-tmp
+          mountPath: /tmp
+        - name: nginx-run
+          mountPath: /var/run  
       volumes:
       - name: config-volume
         configMap:
@@ -93,3 +99,9 @@ spec:
       - name: html-volume
         configMap:
           name: nginx-html
+      - name: nginx-cache
+        emptyDir: {}
+      - name: nginx-tmp
+        emptyDir: {}
+      - name: nginx-run
+        emptyDir: {}

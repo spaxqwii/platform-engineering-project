@@ -17,12 +17,6 @@ spec:
     repoURL: https://github.com/spaxqwii/platform-engineering-project.git
     path: applications/microservices/simple-app/enhanced-manifests
     targetRevision: main
-    kustomize:
-      namePrefix: prod-
-      commonLabels:
-        deployed-via: argocd
-      commonAnnotations:
-        deployment-timestamp: "2024-01-06"
   destination:
     server: https://kubernetes.default.svc
     namespace: simple-app

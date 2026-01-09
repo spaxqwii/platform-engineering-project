@@ -4,29 +4,27 @@ kind: Kustomization
 namespace: simple-app
 
 resources:
-  - deployment.yaml
-  - service.yaml
-  - ingress.yaml
-  - configmap.yaml
-  - hpa.yaml
+- deployment.yaml
+- service.yaml
+- ingress.yaml
+- nginx-config.yaml
+- nginx-html.yaml
+- hpa.yaml
 
 commonLabels:
   app: simple-app
-  environment: production
   managed-by: argocd
-  part-of: platform-engineering
-
+  
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "0"
   deployed-by: gitops-pipeline
   git-repo: https://github.com/spaxqwii/platform-engineering-project
 
 images:
-  - name: nginx
-    newName: nginx
-    newTag: 1.25-alpine
+- name: nginx
+  newName: nginx
+  newTag: 1.25-alpine
 
 replicas:
-  - name: simple-app
-    count: 2
-
+- count: 2
+  name: simple-app
