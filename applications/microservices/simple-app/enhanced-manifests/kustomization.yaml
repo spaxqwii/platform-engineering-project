@@ -10,7 +10,7 @@ resources:
   - configmap.yaml
   - hpa.yaml
 
-labels:
+commonLabels:
   app: simple-app
   environment: production
   managed-by: argocd
