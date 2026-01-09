@@ -10,7 +10,7 @@ resources:
   - configmap.yaml
   - hpa.yaml
 
-commonLabels:
+labels:
   app: simple-app
   environment: production
   managed-by: argocd
@@ -30,9 +30,9 @@ replicas:
   - name: simple-app
     count: 2
 
-configMapGenerator:
-  - name: nginx-html
-    behavior: merge
-    literals:
-      - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-      - GIT_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "local")
+#configMapGenerator:
+ # - name: nginx-html
+ #  behavior: create
+ #   literals:
+ #     - BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+ #     - GIT_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "local")
