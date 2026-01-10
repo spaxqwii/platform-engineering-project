@@ -13,8 +13,8 @@ resources:
 
 commonLabels:
   app: simple-app
-  managed-by: argocd
-  
+  managed-by: argocd-simple-app
+
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "0"
   deployed-by: gitops-pipeline
