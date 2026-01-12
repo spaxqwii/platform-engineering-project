@@ -7,12 +7,12 @@ metadata:
     argocd.argoproj.io/sync-wave: "10"
   labels:
     type: platform
-    #category: observability
+    category: monitoring
 spec:
   project: default
   source:
     repoURL: https://github.com/spaxqwii/platform-engineering-project.git
-    path: platform/observability/manifests
+    path: platform/monitoring/manifests
     targetRevision: main
     kustomize:
       namePrefix: monitoring-
