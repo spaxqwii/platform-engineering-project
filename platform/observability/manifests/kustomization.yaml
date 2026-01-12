@@ -6,7 +6,7 @@ namespace: monitoring
 resources:
   - prometheus/prometheus-stack.yaml
   - grafana/grafana.yaml
-  - grafana/dashboards-configmap.yaml
+  - grafana/grafana-dashboards.yaml
 
 configMapGenerator:
   - name: grafana-admin
