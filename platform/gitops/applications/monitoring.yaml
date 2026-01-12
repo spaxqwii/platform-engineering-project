@@ -1,14 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: monitoring
+  name: monitoring-stack
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+  labels:
+    type: platform
+    #category: observability
 spec:
   project: default
   source:
     repoURL: https://github.com/spaxqwii/platform-engineering-project.git
     path: platform/observability/manifests
     targetRevision: main
+    kustomize:
+      namePrefix: monitoring-
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
@@ -16,3 +23,16 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - PruneLast=true
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  info:
+  - name: Description
+    value: "Complete monitoring stack with Prometheus, Grafana, and alerts"
+  - name: Access
+    value: "Grafana: http://grafana.monitoring.svc.cluster.local:3000, Prometheus: http://prometheus.monitoring.svc.cluster.local:9090"
