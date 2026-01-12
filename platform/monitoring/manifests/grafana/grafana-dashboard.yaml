@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  platform-engineering.json: |
+    {
+      "dashboard": {
+        "title": "Platform Engineering Dashboard",
+        "description": "Complete platform overview",
+        "tags": ["platform", "kubernetes"],
+        "panels": [
+          {
+            "title": "Pod CPU Usage",
+            "type": "graph",
+            "targets": [{
+              "expr": "sum(rate(container_cpu_usage_seconds_total{container!=\"POD\",container!=\"\"}[5m])) by (pod, namespace)",
+              "legendFormat": "{{pod}} ({{namespace}})"
+            }]
+          },
+          {
+            "title": "Pod Memory Usage",
+            "type": "graph",
+            "targets": [{
+              "expr": "sum(container_memory_working_set_bytes{container!=\"POD\",container!=\"\"}) by (pod, namespace)",
+              "legendFormat": "{{pod}} ({{namespace}})"
+            }]
+          },
+          {
+            "title": "HTTP Requests",
+            "type": "graph",
+            "targets": [{
+              "expr": "rate(http_requests_total[5m])",
+              "legendFormat": "{{method}} {{status}}"
+            }]
+          },
+          {
+            "title": "Pod Restarts",
+            "type": "graph",
+            "targets": [{
+              "expr": "sum(kube_pod_container_status_restarts_total) by (pod, namespace)",
+              "legendFormat": "{{pod}} ({{namespace}})"
+            }]
+          }
+        ]
+      }
+    }

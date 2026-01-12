@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-metrics
+  namespace: simple-app
+data:
+  nginx-metrics.conf: |
+    server {
+        listen 80;
+        
+        location /metrics {
+            stub_status on;
+            access_log off;
+            allow all;
+        }
+        
+        location / {
+            # Your existing config
+        }
+    }

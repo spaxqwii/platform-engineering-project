@@ -1,0 +1,56 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: platform-alerts
+  namespace: monitoring
+  labels:
+    role: alert-rules
+    prometheus: platform
+spec:
+  groups:
+  - name: platform.rules
+    rules:
+    - alert: HighPodCPU
+      expr: sum(rate(container_cpu_usage_seconds_total{container!="POD"}[5m])) by (pod, namespace) > 0.8
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High CPU usage on pod {{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value }} CPU cores"
+    
+    - alert: HighPodMemory
+      expr: sum(container_memory_working_set_bytes{container!="POD"}) by (pod, namespace) > 2147483648  # 2GB
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High memory usage on pod {{ $labels.pod }}"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value | humanize1024 }} memory"
+    
+    - alert: PodCrashLooping
+      expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
+      for: 2m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Pod {{ $labels.pod }} is crash looping"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted {{ $value }} times in 15 minutes"
+    
+    - alert: DeploymentNotReady
+      expr: kube_deployment_status_replicas_available / kube_deployment_spec_replicas < 1
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Deployment {{ $labels.deployment }} is not fully available"
+        description: "Deployment {{ $labels.deployment }} in namespace {{ $labels.namespace }} has only {{ $value | humanizePercentage }} of replicas available"
+    
+    - alert: NodeDown
+      expr: up{job="node-exporter"} == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Node {{ $labels.instance }} is down"
+        description: "Node {{ $labels.instance }} has been down for more than 1 minute"

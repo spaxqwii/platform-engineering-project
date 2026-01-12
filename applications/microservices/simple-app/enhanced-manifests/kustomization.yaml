@@ -9,6 +9,7 @@ resources:
 - ingress.yaml
 - nginx-config.yaml
 - nginx-html.yaml
+- nginx-metrics.yaml
 - hpa.yaml
 
 commonLabels:

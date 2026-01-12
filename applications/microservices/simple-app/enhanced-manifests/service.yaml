@@ -10,6 +10,7 @@ metadata:
     prometheus.io/scrape: "true"
     prometheus.io/port: "80"
     prometheus.io/scheme: "http"
+    prometheus.io/path: "/metrics"
 spec:
   selector:
     app: simple-app
